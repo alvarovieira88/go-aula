@@ -53,3 +53,11 @@ func (m *tagRepository) Delete(ctx context.Context, id uint) error {
 	}
 	return nil
 }
+func (m *tagRepository) GetAll(ctx context.Context) ([]entitie.Tag, error) {
+	var tag []entitie.Tag
+	tx := m.DB.Find(&tag)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return tag, nil
+}

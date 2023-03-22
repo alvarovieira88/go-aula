@@ -18,7 +18,9 @@ func NewTagService(repo _interface.TagRepository, timeout time.Duration) _interf
 		contextTimeout: timeout,
 	}
 }
-
+func (service tagService) GetAll(ctx context.Context) ([]entitie.Tag, error) {
+	return service.repo.GetAll(ctx)
+}
 func (service tagService) GetByID(ctx context.Context, id uint) (entitie.Tag, error) {
 	return service.repo.GetByID(ctx, id)
 }

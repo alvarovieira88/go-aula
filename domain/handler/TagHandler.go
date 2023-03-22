@@ -27,7 +27,7 @@ func NewTagHandler(echoInstance *echo.Echo, service _interface.TagService) {
 	echoInstance.POST("/tag", handler.Store)
 	echoInstance.GET("/tag/:id", handler.GetByID)
 	echoInstance.DELETE("/tag/:id", handler.Delete)
-
+	echoInstance.GET("/tag/getAll", handler.GetAll)
 }
 
 func (a *TagHandler) Delete(echoContext echo.Context) error {
@@ -70,7 +70,17 @@ func (a *TagHandler) GetByID(echoContext echo.Context) error {
 
 	return echoContext.JSON(http.StatusOK, art)
 }
+func (a *TagHandler) GetAll(echoContext echo.Context) error {
 
+	ctx := echoContext.Request().Context()
+
+	art, err := a.TagService.GetAll(ctx)
+	if err != nil {
+		return echoContext.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
+	}
+
+	return echoContext.JSON(http.StatusOK, art)
+}
 func (a *TagHandler) Store(echoContext echo.Context) (err error) {
 	var ent entitie.Tag
 	err = echoContext.Bind(&ent)
