@@ -1,4 +1,4 @@
-package repository
+package tag
 
 import (
 	"context"
@@ -22,6 +22,15 @@ func (m *tagRepository) GetByID(ctx context.Context, id uint) (entitie.Tag, erro
 	tx := m.DB.First(&tag, id)
 	if tx.Error != nil {
 		return entitie.Tag{}, tx.Error
+	}
+	return tag, nil
+}
+
+func (m *tagRepository) GetAll(ctx context.Context) ([]entitie.Tag, error) {
+	var tag []entitie.Tag
+	tx := m.DB.Find(&tag)
+	if tx.Error != nil {
+		return nil, tx.Error
 	}
 	return tag, nil
 }
@@ -52,12 +61,4 @@ func (m *tagRepository) Delete(ctx context.Context, id uint) error {
 		return tx.Error
 	}
 	return nil
-}
-func (m *tagRepository) GetAll(ctx context.Context) ([]entitie.Tag, error) {
-	var tag []entitie.Tag
-	tx := m.DB.Find(&tag)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-	return tag, nil
 }

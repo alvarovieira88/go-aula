@@ -8,10 +8,13 @@ import (
 	"golang.org/x/net/context"
 	echoContext "microservice/cmd/infra/context"
 	"microservice/cmd/infra/env"
-	"microservice/domain/handler/category"
-	"microservice/domain/handler/tag"
+	categoryHandler "microservice/domain/handler/category"
+	tagHandler "microservice/domain/handler/tag"
 	"microservice/domain/repository"
-	"microservice/domain/service"
+	categoryRepository "microservice/domain/repository/category"
+	tagRepository "microservice/domain/repository/tag"
+	categoryService "microservice/domain/service/category"
+	tagService "microservice/domain/service/tag"
 	"net/http"
 	"os"
 	"os/signal"
@@ -35,12 +38,12 @@ func main() {
 	}
 
 	// repository
-	tagRepo := repository.NewTagRepository(database)
-	categoryRepo := repository.NewCategoryRepository(database)
+	tagRepo := tagRepository.NewTagRepository(database)
+	categoryRepo := categoryRepository.NewCategoryRepository(database)
 
 	// service
-	tagService := service.NewTagService(tagRepo, 10)
-	categoryService := service.NewCategoryService(categoryRepo, 10)
+	tagService := tagService.NewTagService(tagRepo, 10)
+	categoryService := categoryService.NewCategoryService(categoryRepo, 10)
 
 	echoInstance.Use(middleware.RequestID())
 	p := prometheus.NewPrometheus("echo", nil)
@@ -72,8 +75,8 @@ func main() {
 	})
 
 	// handler
-	tag.NewTagHandler(echoInstance, tagService)
-	category.NewCategoryHandler(echoInstance, categoryService)
+	tagHandler.NewTagHandler(echoInstance, tagService)
+	categoryHandler.NewCategoryHandler(echoInstance, categoryService)
 
 	// Start server
 	go func() {

@@ -166,7 +166,7 @@ paths:
         '400':
           description: Invalid ID supplied
         '404':
-          description: category not found
+          description: Category not found
         '405':
           description: Validation exception
     post:
@@ -235,14 +235,14 @@ paths:
         '400':
           description: Invalid ID supplied
         '404':
-          description: category not found
+          description: Category not found
   /category/getAll:
     get:
       tags:
         - category
-      summary: Finds Categories
-      description: Find categories.
-      operationId: findCategories
+      summary: Finds Categorys
+      description: Find categorys.
+      operationId: findCategorys
       responses:
         '200':
           description: successful operation
@@ -251,7 +251,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Categories'
+                  $ref: '#/components/schemas/Category'
   /product:
     put:
       tags:
