@@ -1,19 +1,14 @@
-package handler
+package category
 
 import (
 	"github.com/labstack/echo/v4"
-	"go.uber.org/zap"
-	validator "gopkg.in/go-playground/validator.v9"
-	"gorm.io/gorm"
+	"gopkg.in/go-playground/validator.v9"
 	"microservice/domain/entitie"
+	"microservice/domain/handler"
 	_interface "microservice/domain/interface"
 	"net/http"
 	"strconv"
 )
-
-type ResponseError struct {
-	Message string `json:"message"`
-}
 
 type CategoryHandler struct {
 	CategoryService _interface.CategoryService
@@ -42,12 +37,12 @@ func (a *CategoryHandler) Delete(echoContext echo.Context) error {
 
 	category, err := a.CategoryService.GetByID(ctx, id)
 	if err != nil {
-		return echoContext.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
+		return echoContext.JSON(handler.GetStatusCode(err), handler.ResponseError{Message: err.Error()})
 	}
 
 	err = a.CategoryService.Delete(ctx, category.ID)
 	if err != nil {
-		return echoContext.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
+		return echoContext.JSON(handler.GetStatusCode(err), handler.ResponseError{Message: err.Error()})
 	}
 
 	return echoContext.JSON(http.StatusOK, "")
@@ -65,7 +60,7 @@ func (a *CategoryHandler) GetByID(echoContext echo.Context) error {
 
 	art, err := a.CategoryService.GetByID(ctx, id)
 	if err != nil {
-		return echoContext.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
+		return echoContext.JSON(handler.GetStatusCode(err), handler.ResponseError{Message: err.Error()})
 	}
 
 	return echoContext.JSON(http.StatusOK, art)
@@ -76,7 +71,7 @@ func (a *CategoryHandler) GetAll(echoContext echo.Context) error {
 
 	art, err := a.CategoryService.GetAll(ctx)
 	if err != nil {
-		return echoContext.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
+		return echoContext.JSON(handler.GetStatusCode(err), handler.ResponseError{Message: err.Error()})
 	}
 
 	return echoContext.JSON(http.StatusOK, art)
@@ -89,14 +84,14 @@ func (a *CategoryHandler) Store(echoContext echo.Context) (err error) {
 	}
 
 	var ok bool
-	if ok, err = isRequestValid(&ent); !ok {
+	if ok, err = IsRequestValid(&ent); !ok {
 		return echoContext.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	ctx := echoContext.Request().Context()
 	err = a.CategoryService.Store(ctx, &ent)
 	if err != nil {
-		return echoContext.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
+		return echoContext.JSON(handler.GetStatusCode(err), handler.ResponseError{Message: err.Error()})
 	}
 
 	return echoContext.JSON(http.StatusCreated, ent)
@@ -110,41 +105,20 @@ func (a *CategoryHandler) Update(echoContext echo.Context) (err error) {
 	}
 
 	var ok bool
-	if ok, err = isRequestValid(&ent); !ok {
+	if ok, err = IsRequestValid(&ent); !ok {
 		return echoContext.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	ctx := echoContext.Request().Context()
 	err = a.CategoryService.Update(ctx, &ent)
 	if err != nil {
-		return echoContext.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
+		return echoContext.JSON(handler.GetStatusCode(err), handler.ResponseError{Message: err.Error()})
 	}
 
 	return echoContext.JSON(http.StatusCreated, ent)
 }
 
-func getStatusCode(err error) int {
-	if err == nil {
-		return http.StatusOK
-	}
-
-	zap.L().Error("error", zap.Error(err))
-
-	switch err {
-	case gorm.ErrRecordNotFound:
-		return http.StatusNotFound
-	case _interface.ErrInternalServerError:
-		return http.StatusInternalServerError
-	case _interface.ErrNotFound:
-		return http.StatusNotFound
-	case _interface.ErrConflict:
-		return http.StatusConflict
-	default:
-		return http.StatusInternalServerError
-	}
-}
-
-func isRequestValid(m *entitie.Category) (bool, error) {
+func IsRequestValid(m *entitie.Category) (bool, error) {
 	validate := validator.New()
 	err := validate.Struct(m)
 	if err != nil {

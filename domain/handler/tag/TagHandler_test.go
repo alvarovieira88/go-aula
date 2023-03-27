@@ -1,4 +1,4 @@
-package handler_test
+package tag_test
 
 import (
 	"context"
@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"microservice/domain/entitie"
-	tagHandler "microservice/domain/handler/tag"
 	"microservice/domain/interface/mocks"
 	"net/http"
 	"net/http/httptest"
@@ -38,7 +37,7 @@ func TestGetByID(t *testing.T) {
 	c.SetPath("article/:id")
 	c.SetParamNames("id")
 	c.SetParamValues(strconv.Itoa(num))
-	handler := tagHandler.TagHandler{
+	handler := TagHandler{
 		TagService: mockUCase,
 	}
 	err = handler.GetByID(c)

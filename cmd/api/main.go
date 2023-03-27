@@ -8,7 +8,7 @@ import (
 	"golang.org/x/net/context"
 	echoContext "microservice/cmd/infra/context"
 	"microservice/cmd/infra/env"
-	"microservice/domain/handler"
+	"microservice/domain/handler/tag"
 	"microservice/domain/repository"
 	"microservice/domain/service"
 	"net/http"
@@ -69,7 +69,7 @@ func main() {
 	})
 
 	// handler
-	handler.NewTagHandler(echoInstance, tagService)
+	tag.NewTagHandler(echoInstance, tagService)
 
 	// Start server
 	go func() {
