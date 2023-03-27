@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"microservice/domain/entitie"
-	tagHandler "microservice/domain/handler"
+	tagHandler "microservice/domain/handler/tag"
 	"microservice/domain/interface/mocks"
 	"net/http"
 	"net/http/httptest"
